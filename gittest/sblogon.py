@@ -2,6 +2,7 @@
 import time
 import cgi
 
+
 html5top='''
 <!-- {fname} -->
 <!DOCTYPE html>
