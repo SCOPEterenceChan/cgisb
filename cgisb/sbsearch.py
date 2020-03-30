@@ -2,42 +2,41 @@
 
 import time
 import cgi
-import urllib.request
 
-fileIn=urllib.request.urlopen('http://personal.cityu.edu.hk/~dcywchan/2004dco10803/datafile1.txt')
-byteStr = fileIn.read()
-lines=byteStr.decode('utf-8')
-lineSep=lines.split('\r\n')
+fileIn = open('datafile1.dat', 'r')
 
 clientDT=['Name','Address','Balance']
 clientDL=[]
-        
-for e in lineSep:
-    if e != '':
-        clientRec=e.split('_')
-        if len(clientDL) == 0:
-            if clientRec[2] == 'D':
-                clientDL.append(dict(zip(clientDT,
+
+line = fileIn.readline()
+
+while line != '':
+    clientRec=line.split('_')
+    if len(clientDL) == 0:
+        if clientRec[2] == 'D':
+            clientDL.append(dict(zip(clientDT,
                                      [clientRec[0],clientRec[1],float(clientRec[3])])))
+        else:
+            clientDL.append(dict(zip(clientDT,
+                                     [clientRec[0],clientRec[1],-float(clientRec[3])])))            
+    else: 
+        i = 0
+        while i < len(clientDL) and clientDL[i]['Name'] != clientRec[0]:
+            i += 1
+            
+        if i == len(clientDL):
+            if clientRec[2] == 'D':   
+                clientDL.append(dict(zip(clientDT,
+                                         [clientRec[0],clientRec[1],float(clientRec[3])])))
             else:
                 clientDL.append(dict(zip(clientDT,
-                                     [clientRec[0],clientRec[1],-float(clientRec[3])])))            
-        else: 
-            i = 0
-            while i < len(clientDL) and clientDL[i]['Name'] != clientRec[0]:
-                i += 1
+                                         [clientRec[0],clientRec[1],-float(clientRec[3])])))                
+        else:
+            if clientRec[2] == 'D':
+                clientDL[i]['Balance'] += float(clientRec[3])
+            else: clientDL[i]['Balance'] -= float(clientRec[3])
             
-            if i == len(clientDL):
-                if clientRec[2] == 'D':   
-                    clientDL.append(dict(zip(clientDT,
-                                         [clientRec[0],clientRec[1],float(clientRec[3])])))
-                else:
-                    clientDL.append(dict(zip(clientDT,
-                                         [clientRec[0],clientRec[1],-float(clientRec[3])])))
-            else:
-                if clientRec[2] == 'D':
-                    clientDL[i]['Balance'] += float(clientRec[3])
-                else: clientDL[i]['Balance'] -= float(clientRec[3])
+    line = fileIn.readline()
 
 html5top='''
 <!-- {fname} -->

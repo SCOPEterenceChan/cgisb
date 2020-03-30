@@ -1,7 +1,6 @@
 #!/usr/local/bin/python3.8
 
 import time
-import cgi
 fileIn = open('datafile1.dat', 'r')
 
 clientDT=['Name','Address','Balance']
@@ -36,7 +35,7 @@ while line != '':
             else: clientDL[i]['Balance'] -= float(clientRec[3])
             
     line = fileIn.readline()
-                
+
 html5top='''
 <!-- {fname} -->
 <!DOCTYPE html>
@@ -55,51 +54,20 @@ tableHeader='''
 <table border=1>
 <tr><th>Name</th><th>Address</th><th>Balance</th></tr>
 '''
-
-form = cgi.FieldStorage()
-
-if 'sortBy' in form:
-    sortBy = form[ 'sortBy' ].value
-else:
-    sortBy = 'Name'
- 
-if 'sortOrder' in form:
-    sortOrder = form[ 'sortOrder' ].value
-else:
-    sortOrder = 'ASC'   
-   
-print (html5top.format(fname='sbsort.py',title='sorting',header='Customer Table'))
+print (html5top.format(fname='lab2q5.py',title='Simple Billing Web Page',header='Customer Table'))
 
 print(tableHeader)
-for e in sorted(clientDL, key = lambda c : c[sortBy],reverse = sortOrder == 'DESC'):
-    print ('<tr><td>'+e['Name']+'</td>'+
-           '<td>'+e['Address']+'</td>'+
-           '<td>'+str(e['Balance'])+'</td></tr>')
+
+for e in sorted(clientDL, key = lambda c: c['Name']):
+    if e['Balance'] != 0:
+        print ('<tr><td>'+e['Name']+'</td>'+
+               '<td>'+e['Address']+'</td>'+
+               '<td>'+str(e['Balance'])+'</td></tr>')
 
 print('</table>')
-print('<hr>')
+print('<p />')
 
-print (
-'''
-\n<form method = 'post' action = '/cgi-bin/sbsort.py'>
-   Sort By:<br />
-''')
-
-for field in clientDT:
-    print ('''<input type = 'radio' name = 'sortBy'
-      value = '%s' />''' % field)
-    print (field)
-    print ("<br />")
-
-print ('''<br />Sort Order:<br />
-      <input type = 'radio' name = 'sortOrder'
-      value = 'ASC' checked = 'checked' />
-      Ascending
-      <input type = 'radio' name = 'sortOrder'
-      value = 'DESC' />
-      Descending
-      <br /><br /><input type = 'submit' value = 'SORT' />
-      </form><br />''')
- 
 print (time.ctime( time.time() ))
 print (html5bottom)
+
+fileIn.close()
